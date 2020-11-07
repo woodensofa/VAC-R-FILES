@@ -1,0 +1,11 @@
+library(robotstxt)
+library(rvest)
+library(dplyr)
+Src_Path="https://www.shiksha.com/university/srm-university-sonepat-42930/reviews"
+Path=paths_allowed(Src_Path)
+WorkLink=read_html(Src_Path)
+Reviwer_and_Course<-WorkLink%>%html_nodes(".rvw-usr-name")%>%html_text()
+Ratings<-WorkLink%>%html_nodes(".rvw-aggrgt .rating-block")%>%html_text()
+Comment<-WorkLink%>%html_nodes(".rvw-heading")%>%html_text()
+MainFile<-data.frame(Job_Title,Job_Location,Review)
+View(MainFile)
