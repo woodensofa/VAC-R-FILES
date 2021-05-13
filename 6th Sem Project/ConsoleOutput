@@ -1,0 +1,323 @@
+> #Body Shape and related measurements from the 
+> #US National Health and Nutrition Examination Survey 
+> #(NHANES, 1999-2004)
+> library(NHANES)
+> library(dplyr)
+> # Load the NHANESraw data
+> data("NHANESraw")
+> glimpse(NHANESraw)
+Rows: 20,293
+Columns: 78
+$ ID               <int> 51624, 51625, 51626, 51627, 51628, 51629, 51630, 5163…
+$ SurveyYr         <fct> 2009_10, 2009_10, 2009_10, 2009_10, 2009_10, 2009_10,…
+$ Gender           <fct> male, male, male, male, female, male, female, female,…
+$ Age              <int> 34, 4, 16, 10, 60, 26, 49, 1, 10, 80, 10, 80, 4, 35, …
+$ AgeMonths        <int> 409, 49, 202, 131, 722, 313, 596, 12, 124, NA, 121, N…
+$ Race1            <fct> White, Other, Black, Black, Black, Mexican, White, Wh…
+$ Race3            <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Education        <fct> High School, NA, NA, NA, High School, 9 - 11th Grade,…
+$ MaritalStatus    <fct> Married, NA, NA, NA, Widowed, Married, LivePartner, N…
+$ HHIncome         <fct> 25000-34999, 20000-24999, 45000-54999, 20000-24999, 1…
+$ HHIncomeMid      <int> 30000, 22500, 50000, 22500, 12500, 30000, 40000, 4000…
+$ Poverty          <dbl> 1.36, 1.07, 2.27, 0.81, 0.69, 1.01, 1.91, 1.36, 2.68,…
+$ HomeRooms        <int> 6, 9, 5, 6, 6, 4, 5, 5, 7, 4, 5, 5, 7, NA, 6, 6, 5, 6…
+$ HomeOwn          <fct> Own, Own, Own, Rent, Rent, Rent, Rent, Rent, Own, Own…
+$ Work             <fct> NotWorking, NA, NotWorking, NA, NotWorking, Working, …
+$ Weight           <dbl> 87.4, 17.0, 72.3, 39.8, 116.8, 97.6, 86.7, 9.4, 26.0,…
+$ Length           <dbl> NA, NA, NA, NA, NA, NA, NA, 75.7, NA, NA, NA, NA, NA,…
+$ HeadCirc         <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ Height           <dbl> 164.7, 105.4, 181.3, 147.8, 166.0, 173.0, 168.4, NA, …
+$ BMI              <dbl> 32.22, 15.30, 22.00, 18.22, 42.39, 32.61, 30.57, NA, …
+$ BMICatUnder20yrs <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ BMI_WHO          <fct> 30.0_plus, 12.0_18.5, 18.5_to_24.9, 12.0_18.5, 30.0_p…
+$ Pulse            <int> 70, NA, 68, 68, 72, 72, 86, NA, 70, 88, 84, 54, NA, N…
+$ BPSysAve         <int> 113, NA, 109, 93, 150, 104, 112, NA, 108, 139, 94, 12…
+$ BPDiaAve         <int> 85, NA, 59, 41, 68, 49, 75, NA, 53, 43, 45, 60, NA, N…
+$ BPSys1           <int> 114, NA, 112, 92, 154, 102, 118, NA, 106, 142, 94, 12…
+$ BPDia1           <int> 88, NA, 62, 36, 70, 50, 82, NA, 60, 62, 38, 62, NA, N…
+$ BPSys2           <int> 114, NA, 114, 94, 150, 104, 108, NA, 106, 140, 92, 12…
+$ BPDia2           <int> 88, NA, 60, 44, 68, 48, 74, NA, 50, 46, 40, 62, NA, N…
+$ BPSys3           <int> 112, NA, 104, 92, 150, 104, 116, NA, 110, 138, 96, 11…
+$ BPDia3           <int> 82, NA, 58, 38, 68, 50, 76, NA, 56, 40, 50, 58, NA, N…
+$ Testosterone     <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ DirectChol       <dbl> 1.29, NA, 1.55, 1.89, 1.16, 1.16, 1.16, NA, 1.58, 1.9…
+$ TotChol          <dbl> 3.49, NA, 4.97, 4.16, 5.22, 4.14, 6.70, NA, 4.14, 4.7…
+$ UrineVol1        <int> 352, NA, 281, 139, 30, 202, 77, NA, 39, 128, 109, 38,…
+$ UrineFlow1       <dbl> NA, NA, 0.415, 1.078, 0.476, 0.563, 0.094, NA, 0.300,…
+$ UrineVol2        <int> NA, NA, NA, NA, 246, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ UrineFlow2       <dbl> NA, NA, NA, NA, 2.51, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ Diabetes         <fct> No, No, No, No, Yes, No, No, No, No, No, No, Yes, No,…
+$ DiabetesAge      <int> NA, NA, NA, NA, 56, NA, NA, NA, NA, NA, NA, 70, NA, N…
+$ HealthGen        <fct> Good, NA, Vgood, NA, Fair, Good, Good, NA, NA, Excell…
+$ DaysPhysHlthBad  <int> 0, NA, 2, NA, 20, 2, 0, NA, NA, 0, NA, 0, NA, NA, NA,…
+$ DaysMentHlthBad  <int> 15, NA, 0, NA, 25, 14, 10, NA, NA, 0, NA, 0, NA, NA, …
+$ LittleInterest   <fct> Most, NA, NA, NA, Most, None, Several, NA, NA, None, …
+$ Depressed        <fct> Several, NA, NA, NA, Most, Most, Several, NA, NA, Non…
+$ nPregnancies     <int> NA, NA, NA, NA, 1, NA, 2, NA, NA, NA, NA, NA, NA, NA,…
+$ nBabies          <int> NA, NA, NA, NA, 1, NA, 2, NA, NA, NA, NA, NA, NA, NA,…
+$ Age1stBaby       <int> NA, NA, NA, NA, NA, NA, 27, NA, NA, NA, NA, NA, NA, N…
+$ SleepHrsNight    <int> 4, NA, 8, NA, 4, 4, 8, NA, NA, 6, NA, 9, NA, 7, NA, N…
+$ SleepTrouble     <fct> Yes, NA, No, NA, No, No, Yes, NA, NA, No, NA, No, NA,…
+$ PhysActive       <fct> No, NA, Yes, NA, No, Yes, No, NA, NA, Yes, NA, No, NA…
+$ PhysActiveDays   <int> NA, NA, 5, NA, NA, 2, NA, NA, NA, 4, NA, NA, NA, NA, …
+$ TVHrsDay         <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ CompHrsDay       <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ TVHrsDayChild    <int> NA, 4, NA, 1, NA, NA, NA, NA, 1, NA, 3, NA, 2, NA, 5,…
+$ CompHrsDayChild  <int> NA, 1, NA, 1, NA, NA, NA, NA, 0, NA, 0, NA, 1, NA, 0,…
+$ Alcohol12PlusYr  <fct> Yes, NA, NA, NA, No, Yes, Yes, NA, NA, Yes, NA, No, N…
+$ AlcoholDay       <int> NA, NA, NA, NA, NA, 19, 2, NA, NA, 1, NA, NA, NA, NA,…
+$ AlcoholYear      <int> 0, NA, NA, NA, 0, 48, 20, NA, NA, 52, NA, 0, NA, NA, …
+$ SmokeNow         <fct> No, NA, NA, NA, Yes, No, Yes, NA, NA, No, NA, No, NA,…
+$ Smoke100         <fct> Yes, NA, NA, NA, Yes, Yes, Yes, NA, NA, Yes, NA, Yes,…
+$ SmokeAge         <int> 18, NA, NA, NA, 16, 15, 38, NA, NA, 16, NA, 21, NA, N…
+$ Marijuana        <fct> Yes, NA, NA, NA, NA, Yes, Yes, NA, NA, NA, NA, NA, NA…
+$ AgeFirstMarij    <int> 17, NA, NA, NA, NA, 10, 18, NA, NA, NA, NA, NA, NA, N…
+$ RegularMarij     <fct> No, NA, NA, NA, NA, Yes, No, NA, NA, NA, NA, NA, NA, …
+$ AgeRegMarij      <int> NA, NA, NA, NA, NA, 12, NA, NA, NA, NA, NA, NA, NA, N…
+$ HardDrugs        <fct> Yes, NA, NA, NA, No, Yes, Yes, NA, NA, NA, NA, NA, NA…
+$ SexEver          <fct> Yes, NA, NA, NA, Yes, Yes, Yes, NA, NA, NA, NA, NA, N…
+$ SexAge           <int> 16, NA, NA, NA, 15, 9, 12, NA, NA, NA, NA, NA, NA, NA…
+$ SexNumPartnLife  <int> 8, NA, NA, NA, 4, 10, 10, NA, NA, NA, NA, NA, NA, NA,…
+$ SexNumPartYear   <int> 1, NA, NA, NA, NA, 1, 1, NA, NA, NA, NA, NA, NA, NA, …
+$ SameSex          <fct> No, NA, NA, NA, No, No, Yes, NA, NA, NA, NA, NA, NA, …
+$ SexOrientation   <fct> Heterosexual, NA, NA, NA, NA, Heterosexual, Heterosex…
+$ WTINT2YR         <dbl> 80100.544, 53901.104, 13953.078, 11664.899, 20090.339…
+$ WTMEC2YR         <dbl> 81528.772, 56995.035, 14509.279, 12041.635, 21000.339…
+$ SDMVPSU          <int> 1, 2, 1, 2, 2, 1, 2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1,…
+$ SDMVSTRA         <int> 83, 79, 84, 86, 75, 88, 85, 86, 88, 77, 86, 79, 84, 7…
+$ PregnantNow      <fct> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, U…
+> library(ggplot2)
+> NHANESraw <- NHANESraw %>%
++   mutate(WTMEC4YR = WTMEC2YR / 2) 
+> NHANESraw %>% summarize(total_WTMEC4YR = sum(WTMEC4YR))
+# A tibble: 1 x 1
+  total_WTMEC4YR
+           <dbl>
+1     304267200.
+> ggplot(NHANESraw, aes(x=Race1, y=WTMEC4YR))+
++   geom_boxplot()
+> library(survey)
+> nhanes_design <- svydesign(
++   data = NHANESraw,
++   strata = ~SDMVSTRA,
++   id = ~SDMVPSU,
++   nest = TRUE,
++   weights = ~WTMEC4YR)
+> summary(nhanes_design)
+Stratified 1 - level Cluster Sampling design (with replacement)
+With (62) clusters.
+svydesign(data = NHANESraw, strata = ~SDMVSTRA, id = ~SDMVPSU, 
+    nest = TRUE, weights = ~WTMEC4YR)
+Probabilities:
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+8.986e-06 5.664e-05 1.054e-04       Inf 1.721e-04       Inf 
+Stratum Sizes: 
+            75  76  77  78  79  80  81  82  83  84  85  86  87  88  89  90  91
+obs        803 785 823 829 696 751 696 724 713 683 592 946 598 647 251 862 998
+design.PSU   2   2   2   2   2   2   2   2   2   2   2   3   2   2   2   3   3
+actual.PSU   2   2   2   2   2   2   2   2   2   2   2   3   2   2   2   3   3
+            92  93  94  95  96  97  98  99 100 101 102 103
+obs        875 602 688 722 676 608 708 682 700 715 624 296
+design.PSU   3   2   2   2   2   2   2   2   2   2   2   2
+actual.PSU   3   2   2   2   2   2   2   2   2   2   2   2
+Data variables:
+ [1] "ID"               "SurveyYr"         "Gender"           "Age"             
+ [5] "AgeMonths"        "Race1"            "Race3"            "Education"       
+ [9] "MaritalStatus"    "HHIncome"         "HHIncomeMid"      "Poverty"         
+[13] "HomeRooms"        "HomeOwn"          "Work"             "Weight"          
+[17] "Length"           "HeadCirc"         "Height"           "BMI"             
+[21] "BMICatUnder20yrs" "BMI_WHO"          "Pulse"            "BPSysAve"        
+[25] "BPDiaAve"         "BPSys1"           "BPDia1"           "BPSys2"          
+[29] "BPDia2"           "BPSys3"           "BPDia3"           "Testosterone"    
+[33] "DirectChol"       "TotChol"          "UrineVol1"        "UrineFlow1"      
+[37] "UrineVol2"        "UrineFlow2"       "Diabetes"         "DiabetesAge"     
+[41] "HealthGen"        "DaysPhysHlthBad"  "DaysMentHlthBad"  "LittleInterest"  
+[45] "Depressed"        "nPregnancies"     "nBabies"          "Age1stBaby"      
+[49] "SleepHrsNight"    "SleepTrouble"     "PhysActive"       "PhysActiveDays"  
+[53] "TVHrsDay"         "CompHrsDay"       "TVHrsDayChild"    "CompHrsDayChild" 
+[57] "Alcohol12PlusYr"  "AlcoholDay"       "AlcoholYear"      "SmokeNow"        
+[61] "Smoke100"         "SmokeAge"         "Marijuana"        "AgeFirstMarij"   
+[65] "RegularMarij"     "AgeRegMarij"      "HardDrugs"        "SexEver"         
+[69] "SexAge"           "SexNumPartnLife"  "SexNumPartYear"   "SameSex"         
+[73] "SexOrientation"   "WTINT2YR"         "WTMEC2YR"         "SDMVPSU"         
+[77] "SDMVSTRA"         "PregnantNow"      "WTMEC4YR"        
+> nhanes_adult <- nhanes_design%>%
++   subset(Age >=20)
+> summary(nhanes_adult)
+Stratified 1 - level Cluster Sampling design (with replacement)
+With (62) clusters.
+subset(., Age >= 20)
+Probabilities:
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+8.986e-06 4.303e-05 8.107e-05       Inf 1.240e-04       Inf 
+Stratum Sizes: 
+            75  76  77  78  79  80  81  82  83  84  85  86  87  88  89  90  91
+obs        471 490 526 500 410 464 447 400 411 395 357 512 327 355 153 509 560
+design.PSU   2   2   2   2   2   2   2   2   2   2   2   3   2   2   2   3   3
+actual.PSU   2   2   2   2   2   2   2   2   2   2   2   3   2   2   2   3   3
+            92  93  94  95  96  97  98  99 100 101 102 103
+obs        483 376 368 454 362 315 414 409 377 460 308 165
+design.PSU   3   2   2   2   2   2   2   2   2   2   2   2
+actual.PSU   3   2   2   2   2   2   2   2   2   2   2   2
+Data variables:
+ [1] "ID"               "SurveyYr"         "Gender"           "Age"             
+ [5] "AgeMonths"        "Race1"            "Race3"            "Education"       
+ [9] "MaritalStatus"    "HHIncome"         "HHIncomeMid"      "Poverty"         
+[13] "HomeRooms"        "HomeOwn"          "Work"             "Weight"          
+[17] "Length"           "HeadCirc"         "Height"           "BMI"             
+[21] "BMICatUnder20yrs" "BMI_WHO"          "Pulse"            "BPSysAve"        
+[25] "BPDiaAve"         "BPSys1"           "BPDia1"           "BPSys2"          
+[29] "BPDia2"           "BPSys3"           "BPDia3"           "Testosterone"    
+[33] "DirectChol"       "TotChol"          "UrineVol1"        "UrineFlow1"      
+[37] "UrineVol2"        "UrineFlow2"       "Diabetes"         "DiabetesAge"     
+[41] "HealthGen"        "DaysPhysHlthBad"  "DaysMentHlthBad"  "LittleInterest"  
+[45] "Depressed"        "nPregnancies"     "nBabies"          "Age1stBaby"      
+[49] "SleepHrsNight"    "SleepTrouble"     "PhysActive"       "PhysActiveDays"  
+[53] "TVHrsDay"         "CompHrsDay"       "TVHrsDayChild"    "CompHrsDayChild" 
+[57] "Alcohol12PlusYr"  "AlcoholDay"       "AlcoholYear"      "SmokeNow"        
+[61] "Smoke100"         "SmokeAge"         "Marijuana"        "AgeFirstMarij"   
+[65] "RegularMarij"     "AgeRegMarij"      "HardDrugs"        "SexEver"         
+[69] "SexAge"           "SexNumPartnLife"  "SexNumPartYear"   "SameSex"         
+[73] "SexOrientation"   "WTINT2YR"         "WTMEC2YR"         "SDMVPSU"         
+[77] "SDMVSTRA"         "PregnantNow"      "WTMEC4YR"        
+> nrow(nhanes_adult)
+[1] 11778
+> nrow(nhanes_design)
+[1] 20293
+> # Calculate the mean BMI in NHANESraw
+> bmi_mean_raw <- NHANESraw %>% 
++   filter(Age >= 20) %>%
++   summarize(avg.BMI = mean(BMI, na.rm=TRUE))
+> bmi_mean_raw
+# A tibble: 1 x 1
+  avg.BMI
+    <dbl>
+1    29.0
+> # Calculate the survey-weighted mean BMI of US adults
+> bmi_mean <- svymean(~BMI, design = nhanes_adult, na.rm = TRUE)
+> bmi_mean
+      mean     SE
+BMI 28.734 0.1235
+> # Draw a weighted histogram of BMI in the US population
+> NHANESraw %>% 
++   filter(Age >= 20) %>%
++   ggplot(mapping=aes(x=BMI, weight=WTMEC4YR)) + 
++   geom_histogram()+
++   geom_vline(xintercept = coef(bmi_mean), color="red")
+`stat_bin()` using `bins = 30`. Pick better value
+with `binwidth`.
+Warning message:
+Removed 547 rows containing non-finite values
+(stat_bin). 
+> # Load the broom library
+> library(broom)
+> library(quantreg)
+> # Make a boxplot of BMI stratified by physically active status
+> NHANESraw %>% 
++   filter(Age>=20) %>%
++   ggplot(mapping=aes(x=PhysActive, y= BMI, weight=WTMEC4YR))+
++   geom_boxplot()
+Warning message:
+Removed 547 rows containing non-finite values
+(stat_boxplot). 
+> # Conduct a t-test comparing mean BMI between physically active status
+> survey_ttest <- svyttest(BMI~PhysActive, design = nhanes_adult)
+> # Use broom to show the tidy results
+> tidy(survey_ttest)
+# A tibble: 1 x 8
+  estimate statistic  p.value parameter conf.low
+     <dbl>     <dbl>    <dbl>     <dbl>    <dbl>
+1    -1.85     -9.72 4.56e-11        32    -2.22
+# … with 3 more variables: conf.high <dbl>,
+#   method <chr>, alternative <chr>
+> # Estimate the proportion who are physically active by current smoking status
+> phys_by_smoke <- svyby(~PhysActive, by = ~SmokeNow, 
++                        FUN = svymean, 
++                        design = nhanes_adult, 
++                        keep.names = FALSE)
+> # Print the table
+> phys_by_smoke
+  SmokeNow PhysActiveNo PhysActiveYes se.PhysActiveNo
+1       No    0.4566990     0.5433010      0.01738054
+2      Yes    0.5885421     0.4114579      0.01163246
+  se.PhysActiveYes
+1       0.01738054
+2       0.01163246
+> # Plot the proportions
+> ggplot(data = phys_by_smoke, aes(SmokeNow, PhysActiveYes, fill = SmokeNow)) +
++   geom_col()+
++   ylab("Proportion Physically Active")
+> # Estimate mean BMI by current smoking status
+> BMI_by_smoke <- svyby(~BMI, by = ~SmokeNow, 
++                       FUN = svymean, 
++                       design = nhanes_adult, 
++                       na.rm = TRUE)
+> BMI_by_smoke
+    SmokeNow      BMI        se
+No        No 29.25734 0.1915138
+Yes      Yes 27.74873 0.1652377
+> # Plot the distribution of BMI by current smoking status
+> NHANESraw %>% 
++   filter(Age>=20, !is.na(SmokeNow)) %>% 
++   ggplot(mapping=aes(x=SmokeNow, y= BMI, weight=WTMEC4YR))+
++   geom_boxplot()
+Warning message:
+Removed 244 rows containing non-finite values
+(stat_boxplot). 
+> # Plot the distribution of BMI by smoking and physical activity status
+> NHANESraw %>% 
++   filter(Age>=20) %>%
++   ggplot(mapping=aes(x=SmokeNow, y= BMI, weight=WTMEC4YR, color=PhysActive))+
++   geom_boxplot()
+Warning message:
+Removed 547 rows containing non-finite values
+(stat_boxplot). 
+> # Fit a multiple regression model
+> mod1 <- svyglm(BMI ~ SmokeNow * PhysActive, design = nhanes_adult)
+> # Tidy the model results
+> tidy_mod1 <- tidy(mod1)
+> tidy_mod1
+# A tibble: 4 x 5
+  term             estimate std.error statistic  p.value
+  <chr>               <dbl>     <dbl>     <dbl>    <dbl>
+1 (Intercept)         30.5      0.210    146.   2.62e-44
+2 SmokeNowYes         -2.24     0.267     -8.40 2.26e- 9
+3 PhysActiveYes       -2.35     0.236     -9.97 4.96e-11
+4 SmokeNowYes:Phy…     1.00     0.344      2.92 6.52e- 3
+> # Calculate expected mean difference in BMI for activity within non-smokers
+> diff_non_smoke <- tidy_mod1 %>% 
++   filter(term == "PhysActiveYes") %>% 
++   select(estimate)
+> diff_non_smoke
+# A tibble: 1 x 1
+  estimate
+     <dbl>
+1    -2.35
+> # Calculate expected mean difference in BMI for activity within smokers
+> diff_smoke <- tidy_mod1 %>% 
++   filter(term %in% c('PhysActiveYes','SmokeNowYes:PhysActiveYes')) %>% 
++   summarize(estimate = sum(estimate))
+> diff_smoke
+# A tibble: 1 x 1
+  estimate
+     <dbl>
+1    -1.35
+> # Adjust mod1 for other possible confounders
+> mod2 <- svyglm(BMI ~ PhysActive*SmokeNow + Race1 + Alcohol12PlusYr + Gender, 
++                design = nhanes_adult)
+> # Tidy the output
+> tidy(mod2)
+# A tibble: 10 x 5
+   term            estimate std.error statistic  p.value
+   <chr>              <dbl>     <dbl>     <dbl>    <dbl>
+ 1 (Intercept)       33.2       0.316   105.    1.75e-33
+ 2 PhysActiveYes     -2.11      0.273    -7.75  5.56e- 8
+ 3 SmokeNowYes       -2.23      0.303    -7.34  1.40e- 7
+ 4 Race1Hispanic     -1.47      0.420    -3.49  1.88e- 3
+ 5 Race1Mexican      -0.191     0.464    -0.412 6.84e- 1
+ 6 Race1White        -2.08      0.320    -6.49  1.04e- 6
+ 7 Race1Other        -3.11      0.620    -5.01  4.09e- 5
+ 8 Alcohol12PlusY…   -0.855     0.358    -2.39  2.50e- 2
+ 9 Gendermale        -0.256     0.230    -1.11  2.78e- 1
+10 PhysActiveYes:…    0.737     0.387     1.90  6.92e- 2
+> View(NHANESraw)
